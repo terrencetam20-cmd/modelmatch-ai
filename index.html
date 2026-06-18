@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ModelMatch AI</title>
+    <meta
+      name="description"
+      content="Match AI models to real tasks, compare outputs in Arena Lite, and capture preference votes."
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Workspace navigation">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">M</div>
+          <div>
+            <p class="eyebrow">ModelMatch</p>
+            <h1>AI</h1>
+          </div>
+        </div>
+        <nav class="nav-list">
+          <a href="#task" class="active">Task</a>
+          <a href="#recommendations">Recommendations</a>
+          <a href="#arena">Arena Lite</a>
+          <a href="#rubric">Rubric</a>
+          <a href="#votes">Votes</a>
+        </nav>
+        <div class="sidebar-panel">
+          <p class="panel-label">Current Fit</p>
+          <strong id="sidebarFit">Not scored</strong>
+          <span id="sidebarHint">Complete the questionnaire to rank models.</span>
+        </div>
+      </aside>
+
+      <main>
+        <section id="task" class="hero section-band">
+          <div class="hero-copy">
+            <p class="eyebrow">MVP workspace</p>
+            <h2>Find the best AI model for a specific job, not a generic leaderboard.</h2>
+            <p>
+              Describe the task, tune the constraints, compare recommended models, and record the result.
+            </p>
+          </div>
+          <div class="hero-metrics" aria-label="MVP metrics">
+            <div>
+              <span id="modelCount">8</span>
+              <p>models tracked</p>
+            </div>
+            <div>
+              <span id="savedCount">0</span>
+              <p>saved runs</p>
+            </div>
+            <div>
+              <span id="voteCount">0</span>
+              <p>votes captured</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace-grid">
+          <form id="matchForm" class="task-panel" aria-label="Task questionnaire">
+            <div class="section-heading">
+              <p class="eyebrow">Task input</p>
+              <h2>Questionnaire</h2>
+            </div>
+
+            <label>
+              Task description
+              <textarea
+                id="taskDescription"
+                rows="6"
+                placeholder="Example: Compare models for summarizing long legal contracts with high factual accuracy and low latency."
+              ></textarea>
+            </label>
+
+            <div class="field-grid">
+              <label>
+                Primary job
+                <select id="taskType">
+                  <option value="reasoning">Reasoning and analysis</option>
+                  <option value="coding">Coding and debugging</option>
+                  <option value="writing">Writing and content</option>
+                  <option value="vision">Image or document understanding</option>
+                  <option value="realtime">Realtime voice/chat</option>
+                  <option value="automation">Tool use and automation</option>
+                </select>
+              </label>
+              <label>
+                Budget priority
+                <select id="budget">
+                  <option value="balanced">Balanced</option>
+                  <option value="low">Lowest cost</option>
+                  <option value="flexible">Flexible for quality</option>
+                </select>
+              </label>
+              <label>
+                Latency tolerance
+                <select id="latency">
+                  <option value="standard">Standard</option>
+                  <option value="fast">Fast response</option>
+                  <option value="batch">Batch/offline</option>
+                </select>
+              </label>
+              <label>
+                Output sensitivity
+                <select id="risk">
+                  <option value="medium">Moderate</option>
+                  <option value="high">High accuracy required</option>
+                  <option value="low">Exploratory</option>
+                </select>
+              </label>
+            </div>
+
+            <fieldset>
+              <legend>Capabilities needed</legend>
+              <div class="chip-grid" id="capabilityGroup">
+                <label><input type="checkbox" value="long-context"> Long context</label>
+                <label><input type="checkbox" value="tools"> Tool use</label>
+                <label><input type="checkbox" value="vision"> Vision</label>
+                <label><input type="checkbox" value="structured"> Structured output</label>
+                <label><input type="checkbox" value="safety"> Strong safety</label>
+                <label><input type="checkbox" value="open-weight"> Open weight</label>
+              </div>
+            </fieldset>
+
+            <div class="actions">
+              <button type="submit" class="primary-button">Rank models</button>
+              <button type="button" id="resetButton" class="ghost-button">Reset</button>
+            </div>
+          </form>
+
+          <section id="recommendations" class="recommendation-panel" aria-live="polite">
+            <div class="section-heading">
+              <p class="eyebrow">Recommendation engine</p>
+              <h2>Best matches</h2>
+            </div>
+            <div id="recommendationList" class="model-list"></div>
+          </section>
+        </section>
+
+        <section id="arena" class="section-band">
+          <div class="section-heading">
+            <p class="eyebrow">Arena Lite</p>
+            <h2>Side-by-side model trial</h2>
+          </div>
+          <div class="arena-toolbar">
+            <label>
+              Model A
+              <select id="arenaModelA"></select>
+            </label>
+            <label>
+              Model B
+              <select id="arenaModelB"></select>
+            </label>
+            <button id="runArena" class="primary-button" type="button">Generate comparison</button>
+          </div>
+          <div class="arena-grid">
+            <article class="arena-output">
+              <div class="output-header">
+                <h3 id="arenaTitleA">Model A</h3>
+                <button class="vote-button" data-vote="A" type="button">Vote A</button>
+              </div>
+              <p id="arenaOutputA"></p>
+            </article>
+            <article class="arena-output">
+              <div class="output-header">
+                <h3 id="arenaTitleB">Model B</h3>
+                <button class="vote-button" data-vote="B" type="button">Vote B</button>
+              </div>
+              <p id="arenaOutputB"></p>
+            </article>
+          </div>
+          <p class="arena-note">
+            Arena Lite generates deterministic comparison drafts from the selected model profiles. Connect provider APIs later for live model outputs.
+          </p>
+        </section>
+
+        <section id="rubric" class="workspace-grid">
+          <div class="rubric-panel">
+            <div class="section-heading">
+              <p class="eyebrow">Rubric-based evaluation</p>
+              <h2>Score the run</h2>
+            </div>
+            <div id="rubricSliders" class="rubric-list"></div>
+            <button id="saveRun" class="primary-button" type="button">Save run</button>
+          </div>
+
+          <div id="votes" class="history-panel">
+            <div class="section-heading">
+              <p class="eyebrow">Preference voting</p>
+              <h2>Decision log</h2>
+            </div>
+            <div class="history-actions">
+              <button id="exportRuns" class="ghost-button" type="button">Export JSON</button>
+              <button id="clearRuns" class="ghost-button" type="button">Clear</button>
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
